@@ -101,15 +101,15 @@ Run it using:
 $ odin run examples/c_api
 ```
 
-Output:
+<details>
+    <summary>Command output</summary>
 
 ```console
 connected to database
 
 ======= query example begin =======
 
-prepared sql: select AlbumId, Title, ArtistId from Album where 
-ArtistId=1 limit 3
+prepared sql: select AlbumId, Title, ArtistId from Album where ArtistId=1 limit 3
 
 albums: [
         Album{
@@ -160,6 +160,7 @@ got a total of 5 rows
 
 connection closed
 ```
+</details>
 
 ### Addon Package Example
 
@@ -170,8 +171,8 @@ Run it using:
 ```sh
 $ odin run examples/easy_api
 ```
-
-Output:
+<details>
+    <summary>Command output</summary>
 
 ```console
 default config: Runtime_Config{
@@ -183,9 +184,7 @@ connected to database
 
 ======= query example begin =======
 
-[INFO ] --- [2025-03-07 21:13:16] [main.odin:74:main()] SQL: se
-lect AlbumId, Title, ArtistId from Album where ArtistId <= 3 li
-mit 5
+[INFO ] --- [2025-03-07 21:13:16] [main.odin:74:main()] SQL: select AlbumId, Title, ArtistId from Album where ArtistId <= 3 limit 5
 albums: [
         Album{
                 id = 1,
@@ -219,13 +218,13 @@ albums: [
 
 ======= execute example begin =======
 
-[INFO ] --- [2025-03-07 21:13:16] [main.odin:93:main()] SQL: se
-lect 1
+[INFO ] --- [2025-03-07 21:13:16] [main.odin:93:main()] SQL: select 1
 
 ======= execute example end =======
 
 connection closed
 ```
+</details>
 
 ---
 
