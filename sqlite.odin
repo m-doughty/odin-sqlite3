@@ -1,20 +1,60 @@
 package sqlite3
 
-import "base:runtime"
 import "core:c"
-import "core:fmt"
-import "core:mem"
-import "core:reflect"
-import "core:strconv"
-import "core:strings"
-import "core:text/regex"
 
 Connection :: rawptr
 Backup :: rawptr
 Statement :: rawptr
 Blob :: rawptr
 
-foreign import sqlite "libsqlite3.a"
+@(private)
+USE_DYNAMIC_LIB :: #config(SQLITE3_DYNAMIC_LIB, false)
+@(private)
+USE_SYSTEM_LIB :: #config(SQLITE3_SYSTEM_LIB, false)
+
+when ODIN_OS == .Windows {
+	when USE_SYSTEM_LIB {
+		when USE_DYNAMIC_LIB {
+			foreign import sqlite "system:libsqlite3.dll"
+		} else {
+			foreign import sqlite "system:libsqlite3.lib"
+		}
+	} else {
+		when USE_DYNAMIC_LIB {
+			foreign import sqlite "libsqlite3.dll"
+		} else {
+			foreign import sqlite "libsqlite3.lib"
+		}
+	}
+} else when ODIN_OS == .Darwin {
+	when USE_SYSTEM_LIB {
+		when USE_DYNAMIC_LIB {
+			foreign import sqlite "system:libsqlite3.dylib"
+		} else {
+			foreign import sqlite "system:libsqlite3.a"
+		}
+	} else {
+		when USE_DYNAMIC_LIB {
+			foreign import sqlite "libsqlite3.dylib"
+		} else {
+			foreign import sqlite "libsqlite3.a"
+		}
+	}
+} else when ODIN_OS == .Linux {
+	when USE_SYSTEM_LIB {
+		when USE_DYNAMIC_LIB {
+			foreign import sqlite "system:libsqlite3.so"
+		} else {
+			foreign import sqlite "system:libsqlite3.a"
+		}
+	} else {
+		when USE_DYNAMIC_LIB {
+			foreign import sqlite "libsqlite3.so"
+		} else {
+			foreign import sqlite "libsqlite3.a"
+		}
+	}
+}
 
 Config_Option :: enum (c.int) {
 	Single_Thread       = 1,
