@@ -253,9 +253,9 @@ When `USE_SQLCIPHER` is **true** four extra C symbols become available in the `s
 | `sqlite.rekey`       | `sqlite3_rekey`      | Re-encrypt the database with a **new** key. |
 | `sqlite.rekey_v2`    | `sqlite3_rekey_v2`   | Same as above, but scoped to a specific attached schema. |
 
-All four return the usual SQLite result code – `SQLITE_OK` on success, or `SQLITE_NOTADB` / `SQLITE_ERROR` if the key/password is wrong. You can also use the bare `PRAGMA key="mypassword"` and `PRAGMA rekey="newpassword"` if desired.
+You can also use the bare `PRAGMA key="mypassword"` and `PRAGMA rekey="newpassword"` if desired.
 
-*If you compile without `-define:SQLITE3_USE_SQLCIPHER=true`, you will not be able to access the new keys, keeping SQLite builds safe and free from unused exports.*
+*If you compile without `-define:SQLITE3_USE_SQLCIPHER=true`, you will not be able to access these functions, keeping SQLite builds safe and free from unused exports.*
 
 ### Minimal example
 
