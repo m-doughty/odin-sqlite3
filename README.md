@@ -273,17 +273,16 @@ main :: proc() {
 
     // Provide the secret for the database. You MUST do this before using it.
     secret := "Tr0ub4dor&3";
-    if sqlite.key(db, raw_data(secret), cast(c.int)len(secret)) != .Ok {
-        // Handle error
+    if sqlite.key(db, raw_data(secret), cast(c.int)len(secret)) != 0 {
+        // Handle error - note: this will return 0 even if the key is wrong.
+        // You will get an error on the next call if the key is wrong.
     }
 
     // ...Everything else is the same as using SQLite...
 
     // Change the secret for the database.
     new_secret := "CorrectHorseBatteryStaple";
-    if sqlite.rekey(db, raw_data(new_secret), cast(c.int)len(new_secret)) != 0 {
-        // Handle error
-    }
+    sqlite.rekey(db, raw_data(new_secret), cast(c.int)len(new_secret))
 }
 ```
 
