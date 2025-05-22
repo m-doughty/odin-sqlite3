@@ -236,11 +236,11 @@ connection closed
 
 This binding can talk to **[SQLCipher](https://github.com/sqlcipher/sqlcipher)** out-of-the-box – you just need to link against `libsqlcipher` (note: this has only been tested on MacOS but should work across platforms):
 
-| What you need | How to do it |
-|---------------|--------------|
-| **1. Install SQLCipher** | macOS: `brew install sqlcipher`  •  Ubuntu: `apt install sqlcipher libsqlcipher-dev`  •  Windows: grab the pre-built DLLs |
-| **2. Tell Odin you want SQLCipher** | `odin build . -define:SQLITE3_USE_SQLCIPHER=true -define:SQLITE3_DYNAMIC_LIB=true -define:SQLITE3_SYSTEM_LIB=true` |
+```sh
+odin build . -define:SQLITE3_USE_SQLCIPHER=true
+```
 
+*Note: Other build flags remain the same. You will need to compile sqlcipher or install from your OS's package manager.*
 
 ### 🔐  SQLCipher-only functions
 
@@ -260,6 +260,8 @@ All four return the usual SQLite result code – `SQLITE_OK` on success, or `SQL
 ### Minimal example
 
 ```odin
+import "core:c"
+
 main :: proc() {
     db: ^sqlite.Connection = nil
 
@@ -267,18 +269,20 @@ main :: proc() {
     if sqlite.open("./encrypted.sqlite", &db) != .Ok {
         panic("open failed")
     }
-    defer sqlite.close(db_handle)
+    defer sqlite.close(db)
 
     // Provide the secret for the database. You MUST do this before using it.
-    secret : cstring = "Tr0ub4dor&3";
-    if sqlite.key(db, cast(rawptr)secret.data, cast(c.int)len(secret)) != .Ok {
-        panic("wrong key?");
+    secret := "Tr0ub4dor&3";
+    if sqlite.key(db, raw_data(secret), cast(c.int)len(secret)) != .Ok {
+        // Handle error
     }
 
+    // ...Everything else is the same as using SQLite...
+
     // Change the secret for the database.
-    new_secret : cstring = "CorrectHorseBatteryStaple";
-    if sqlite.rekey(db, cast(rawptr)new_secret.data, cast(c.int)len(new_secret)) != .Ok {
-        panic("rekey failed");
+    new_secret := "CorrectHorseBatteryStaple";
+    if sqlite.rekey(db, raw_data(new_secret), cast(c.int)len(new_secret)) != 0 {
+        // Handle error
     }
 }
 ```
