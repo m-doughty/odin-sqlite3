@@ -11,47 +11,97 @@ Blob :: rawptr
 USE_DYNAMIC_LIB :: #config(SQLITE3_DYNAMIC_LIB, false)
 @(private)
 USE_SYSTEM_LIB :: #config(SQLITE3_SYSTEM_LIB, false)
+@(private)
+USE_SQLCIPHER :: #config(SQLITE3_USE_SQLCIPHER, false)
 
 when ODIN_OS == .Windows {
 	when USE_SYSTEM_LIB {
 		when USE_DYNAMIC_LIB {
-			foreign import sqlite "system:libsqlite3.dll"
+			when USE_SQLCIPHER {
+				foreign import sqlite "system:libsqlcipher.dll"
+			} else {
+				foreign import sqlite "system:libsqlite3.dll"
+			}
 		} else {
-			foreign import sqlite "system:libsqlite3.lib"
+			when USE_SQLCIPHER {
+				foreign import sqlite "system:libsqlcipher.lib"
+			} else {
+				foreign import sqlite "system:libsqlite3.lib"
+			}
 		}
 	} else {
 		when USE_DYNAMIC_LIB {
-			foreign import sqlite "libsqlite3.dll"
+			when USE_SQLCIPHER {
+				foreign import sqlite "libsqlcipher.dll"
+			} else {
+				foreign import sqlite "libsqlite3.dll"
+			}
 		} else {
-			foreign import sqlite "libsqlite3.lib"
+			when USE_SQLCIPHER {
+				foreign import sqlite "libsqlcipher.lib"
+			} else {
+				foreign import sqlite "libsqlite3.lib"
+			}
 		}
 	}
 } else when ODIN_OS == .Darwin {
 	when USE_SYSTEM_LIB {
 		when USE_DYNAMIC_LIB {
-			foreign import sqlite "system:libsqlite3.dylib"
+			when USE_SQLCIPHER {
+				foreign import sqlite "system:libsqlcipher.dylib"
+			} else {
+				foreign import sqlite "system:libsqlite3.dylib"
+			}
 		} else {
-			foreign import sqlite "system:libsqlite3.a"
+			when USE_SQLCIPHER {
+				foreign import sqlite "system:libsqlcipher.a"
+			} else {
+				foreign import sqlite "system:libsqlite3.a"
+			}
 		}
 	} else {
 		when USE_DYNAMIC_LIB {
-			foreign import sqlite "libsqlite3.dylib"
+			when USE_SQLCIPHER {
+				foreign import sqlite "libsqlcipher.dylib"
+			} else {
+				foreign import sqlite "libsqlite3.dylib"
+			}
 		} else {
-			foreign import sqlite "libsqlite3.a"
+			when USE_SQLCIPHER {
+				foreign import sqlite "libsqlcipher.a"
+			} else {
+				foreign import sqlite "libsqlite3.a"
+			}
 		}
 	}
 } else when ODIN_OS == .Linux {
 	when USE_SYSTEM_LIB {
 		when USE_DYNAMIC_LIB {
-			foreign import sqlite "system:libsqlite3.so"
+			when USE_SQLCIPHER {
+				foreign import sqlite "system:libsqlcipher.so"
+			} else {
+				foreign import sqlite "system:libsqlite3.so"
+			}
 		} else {
-			foreign import sqlite "system:libsqlite3.a"
+			when USE_SQLCIPHER {
+				foreign import sqlite "system:libsqlcipher.a"
+			} else {
+				foreign import sqlite "system:libsqlite3.a"
+			}
 		}
 	} else {
 		when USE_DYNAMIC_LIB {
-			foreign import sqlite "libsqlite3.so"
+			when USE_SQLCIPHER {
+				foreign import sqlite "libsqlcipher.so"
+			} else {
+				foreign import sqlite "libsqlite3.so"
+			}
 		} else {
-			foreign import sqlite "libsqlite3.a"
+			when USE_SQLCIPHER {
+				foreign import sqlite "libsqlcipher.a"
+			} else {
+				foreign import sqlite "libsqlite3.a"
+			}
 		}
 	}
 }
@@ -279,4 +329,12 @@ foreign sqlite {
 	config :: proc "c" (option: Config_Option) -> Result_Code ---
 	sql :: proc "c" (statement: ^Statement) -> cstring ---
 	expanded_sql :: proc "c" (statement: ^Statement) -> cstring ---
+
+	// Export SQLCipher-specific functions conditionally.
+	when USE_SQLCIPHER {
+		key :: proc "c" (db: ^Connection, key: rawptr, nKey: c.int) -> c.int ---
+		key_v2 :: proc "c" (db: ^Connection, zDbName: cstring, key: rawptr, nKey: c.int) -> c.int ---
+		rekey :: proc "c" (db: ^Connection, key: rawptr, nKey: c.int) -> c.int ---
+		rekey_v2 :: proc "c" (db: ^Connection, zDbName: cstring, key: rawptr, nKey: c.int) -> c.int ---
+	}
 }
